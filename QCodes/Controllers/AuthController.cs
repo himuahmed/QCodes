@@ -20,13 +20,11 @@ namespace QCodes.Controllers
     {
         private readonly IAuthRepository _authRepository;
         private readonly IConfiguration _configuration;
-        private readonly IUserAndPersonRepository _userAndPersonRepository;
-
         public AuthController(IAuthRepository authRepository, IConfiguration configuration, IUserAndPersonRepository userAndPersonRepository)
         {
             _authRepository = authRepository;
             _configuration = configuration;
-            _userAndPersonRepository = userAndPersonRepository;
+
         }
 
         [HttpPost("usersignup")]
@@ -79,6 +77,7 @@ namespace QCodes.Controllers
 
             return Ok(new { token = tokenHandler.WriteToken(token) });
         }
+
 
 
 

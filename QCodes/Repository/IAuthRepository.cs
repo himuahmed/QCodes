@@ -6,8 +6,9 @@ namespace QCodes.Repository
 {
     public interface IAuthRepository
     {
-        Task<IdentityResult> UserRegister(UserRegistrationModel userRegistrationModel); 
+        Task<IdentityResult> UserRegister(UserRegistrationModel userRegistrationModel);
         Task<bool> UserExists(string userName);
         Task<IdentityUser> Login(LoginModel loginModel);
+
     }
 }

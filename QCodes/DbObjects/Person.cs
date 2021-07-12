@@ -18,11 +18,11 @@ namespace QCodes.DbObjects
         public string Email { get; set; }
         [Required]
         public string BloodGroup { get; set; }
-        public string Address { get; set; }
+        public string Division { get; set; }
         public string ContactNo { get; set; }
         public string Country { get; set; }
         public string District { get; set; }
-        public string Village { get; set; }
+        public string Union { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }
