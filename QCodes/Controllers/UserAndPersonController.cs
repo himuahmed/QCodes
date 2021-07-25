@@ -8,12 +8,14 @@ using QCodes.Models;
 using QCodes.Repository;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.Linq;
 using QCodes.Services;
+using Microsoft.AspNetCore.Identity;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QCodes.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserAndPersonController : ControllerBase
@@ -21,20 +23,50 @@ namespace QCodes.Controllers
         private readonly IUserAndPersonRepository _userAndPersonRepository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UserAndPersonController(IUserAndPersonRepository userAndPersonRepository,IMapper mapper,IConfiguration configuration)
+        public UserAndPersonController(IUserAndPersonRepository userAndPersonRepository, IMapper mapper, IConfiguration configuration, UserManager<IdentityUser> userManager)
         {
             _userAndPersonRepository = userAndPersonRepository;
             _mapper = mapper;
             _configuration = configuration;
+            _userManager = userManager;
+        }
+        
+        
+        protected string GetUserId()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value; 
+            return userId;
+        }
+
+        protected string GetUserEmail()
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            return userEmail;
+        }
+
+        [HttpGet("getLoggedInUser")]
+        public async Task<IActionResult> getLoggedInUser()
+        {
+            var userId = GetUserId();
+            var returnedPerson = await _userAndPersonRepository.GetPersonByUserId(userId);
+            var person = _mapper.Map<PersonModel>(returnedPerson);
+            return Ok(person);
+          
         }
 
         [HttpPost("addPersonData")]
         public async Task<IActionResult> AddPersonDate(PersonModel personModel)
         {
+            personModel.UserId = GetUserId();
+            personModel.Email = GetUserEmail();
+            personModel.Country = "Bangladesh";
+            personModel.PublicProfile = true;
+            personModel.CreatedAt = DateTime.Now;
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(personModel);
             }
 
             var person = await _userAndPersonRepository.AddPersonDetails(personModel);
@@ -42,7 +74,6 @@ namespace QCodes.Controllers
             {
                 return Ok(person);
             }
-
             return BadRequest("Unable to add person details for " + personModel.FullName);
         }
 
@@ -85,11 +116,22 @@ namespace QCodes.Controllers
         {
             if (district == null) return BadRequest();
 
-            var person = await _userAndPersonRepository.GetPersonByDistrict(district, userParams);
+            var personList = await _userAndPersonRepository.GetPersonByDistrict(district, userParams);
+            foreach (var person in personList)
+            {
+                if (person.ContactNoVisible == false)
+                {
+                    person.ContactNo = "N/A";
+                }
 
+                if (person.EmailVisible == false)
+                {
+                    person.Email = "N/A";
+                }
+            }
             //if (!person.Any()) return Ok("No resord.");
 
-            return Ok(person);
+            return Ok(personList);
         }
 
         [HttpGet("dis/{district}/{bloodGroup}")]
@@ -102,11 +144,22 @@ namespace QCodes.Controllers
                 bloodGroup = bloodGroup.Substring(0, bloodGroup.Length - 8) + "+";
             }
 
-            var person = await _userAndPersonRepository.GetPersonByDistrictAndBloodGroup(district, bloodGroup,userParams);
+            var personList = await _userAndPersonRepository.GetPersonByDistrictAndBloodGroup(district, bloodGroup,userParams);
+            foreach (var person in personList)
+            {
+                if (person.ContactNoVisible == false)
+                {
+                    person.ContactNo = "N/A";
+                }
 
+                if (person.EmailVisible == false)
+                {
+                    person.Email = "N/A";
+                }
+            }
             //if (!person.Any()) return Ok("No resord.");
 
-            return Ok(person);
+            return Ok(personList);
         }
 
         [HttpGet("div/{division}")]
@@ -114,11 +167,22 @@ namespace QCodes.Controllers
         {
             if (division == null) return BadRequest();
 
-            var person = await _userAndPersonRepository.GetPersonByDivision(division, userParams);
+            var personList = await _userAndPersonRepository.GetPersonByDivision(division, userParams);
+            foreach (var person in personList)
+            {
+                if (person.ContactNoVisible == false)
+                {
+                    person.ContactNo = "N/A";
+                }
 
+                if (person.EmailVisible == false)
+                {
+                    person.Email = "N/A";
+                }
+            }
             //if (!person.Any()) return Ok("No resord.");
 
-            return Ok(person);
+            return Ok(personList);
         }
 
         [HttpGet("div/{division}/{bloodGroup}")]
@@ -131,11 +195,22 @@ namespace QCodes.Controllers
                 bloodGroup = bloodGroup.Substring(0, bloodGroup.Length - 8) + "+";
             }
 
-            var person = await _userAndPersonRepository.GetPersonByDivisionAndBloodGroup(division, bloodGroup, userParams);
+            var personList = await _userAndPersonRepository.GetPersonByDivisionAndBloodGroup(division, bloodGroup, userParams);
+            foreach (var person in personList)
+            {
+                if (person.ContactNoVisible == false)
+                {
+                    person.ContactNo = "N/A";
+                }
 
+                if (person.EmailVisible == false)
+                {
+                    person.Email = "N/A";
+                }
+            }
             //if (!person.Any()) return Ok("No resord.");
 
-            return Ok(person);
+            return Ok(personList);
         }
 
         [HttpGet("uni/{union}")]
@@ -143,11 +218,22 @@ namespace QCodes.Controllers
         {
             if (union == null) return BadRequest();
 
-            var person = await _userAndPersonRepository.GetPersonByUnion(union, userParams);
+            var personList = await _userAndPersonRepository.GetPersonByUnion(union, userParams);
+            foreach (var person in personList)
+            {
+                if (person.ContactNoVisible == false)
+                {
+                    person.ContactNo = "N/A";
+                }
 
+                if (person.EmailVisible == false)
+                {
+                    person.Email = "N/A";
+                }
+            }
             //if (!person.Any()) return Ok("No resord.");
 
-            return Ok(person);
+            return Ok(personList);
         }
 
         [HttpGet("uni/{union}/{bloodGroup}")]
@@ -160,11 +246,22 @@ namespace QCodes.Controllers
                 bloodGroup = bloodGroup.Substring(0, bloodGroup.Length - 8) + "+";
             }
 
-            var person = await _userAndPersonRepository.GetPersonByUnionAndBloodGroup(union, bloodGroup, userParams);
+            var personList = await _userAndPersonRepository.GetPersonByUnionAndBloodGroup(union, bloodGroup, userParams);
+            foreach (var person in personList)
+            {
+                if (person.ContactNoVisible == false)
+                {
+                    person.ContactNo = "N/A";
+                }
 
+                if (person.EmailVisible == false)
+                {
+                    person.Email = "N/A";
+                }
+            }
             //if (!person.Any()) return Ok("No resord.");
 
-            return Ok(person);
+            return Ok(personList);
         }
 
         [HttpGet("b/{group}")]
@@ -179,8 +276,19 @@ namespace QCodes.Controllers
             var person = await _userAndPersonRepository.GetPersonByBloodGroup(group, userParams);
 
             Response.Headers(person.CurrentPage, person.PageSize, person.TotalCount, person.TotalPage);
+            foreach (var per in person)
+            {
+                if (per.ContactNoVisible == false)
+                {
+                    per.ContactNo = "N/A";
+                }
 
-           // if (!person.Any()) return Ok("No resord.");
+                if (per.EmailVisible == false)
+                {
+                    per.Email = "N/A";
+                }
+            }
+            //if (!person.Any()) return Ok("No resord.");
 
             return Ok(person);
         }

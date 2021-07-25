@@ -24,14 +24,12 @@ namespace QCodes.Repository
 
             return false;
         }
-
-
         public async Task<IdentityResult> UserRegister(UserRegistrationModel userRegistrationModel)
         {
             var user = new IdentityUser()
             {
                 Email = userRegistrationModel.Email,
-                UserName = userRegistrationModel.Email,
+                UserName = userRegistrationModel.Username,
             };
 
             return await _userManager.CreateAsync(user, userRegistrationModel.Password);

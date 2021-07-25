@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using QCodes.Data;
+using QCodes.Hubs;
 using QCodes.Repository;
 
 namespace QCodes
@@ -35,7 +36,12 @@ namespace QCodes
             services.AddControllers();
             services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<DataContext>();
-            services.AddCors();
+            services.AddCors(o => o.AddPolicy("CorsPolicy",
+                builder =>
+                {
+                    builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:4200").AllowCredentials();
+                }));
+            services.AddSignalR();
             services.AddAutoMapper(typeof(UserAndPersonRepository).Assembly);
 
             services.AddScoped<IQTagRepository, QTagRepository>();
@@ -81,11 +87,13 @@ namespace QCodes
             app.UseAuthorization();
             app.UseAuthentication();
 
-            app.UseCors(c => c.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors("CorsPolicy");
+            
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<MessageHub>("/MessageHub");
             });
         }
     }

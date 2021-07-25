@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -35,6 +36,7 @@ namespace QCodes.Controllers
                 return BadRequest(ModelState);
             }
 
+            var reg = new {Email = userRegistrationModel.Email, Username = userRegistrationModel.Username};
             var result = await _authRepository.UserRegister(userRegistrationModel);
 
             if (!result.Succeeded)
@@ -42,7 +44,7 @@ namespace QCodes.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok("Registration successful for " + userRegistrationModel.Email);
+            return Ok(reg);
         }
 
 

@@ -21,6 +21,8 @@ namespace QCodes.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<QTag>().Property(x => x.TagId).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<Person>().Property(x => x.PersonId).HasDefaultValueSql("NEWID()");
+            //modelBuilder.Entity<Message>().HasOne<AppUser>(a => a.Sender).WithMany(m => m.Messages)
+            //    .HasForeignKey(u => u.UserId);
         }
 
 

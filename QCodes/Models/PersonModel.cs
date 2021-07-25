@@ -11,8 +11,11 @@ namespace QCodes.Models
         public string UserId { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
+        public bool EmailVisible { get; set; }
         public string BloodGroup { get; set; }
+        public bool PublicProfile { get; set; }
         public string ContactNo { get; set; }
+        public bool ContactNoVisible { get; set; }
         public string Country { get; set; }
         public string District { get; set; }
         public string Union { get; set; }
