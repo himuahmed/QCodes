@@ -13,10 +13,10 @@ namespace QCodes.Hubs
    // [Authorize(AuthenticationSchemes = "Bearer")]
     public class MessageHub : Hub
     {
-       public async Task GlobalChat(GlobalMessageModel message)
-        {
-            message.date = DateTime.Now.ToString();
-            await Clients.All.SendAsync("globalMessageReceived", message);
-        }
+       //public async Task GlobalChat(GlobalMessageModel message)
+       // {
+       //     message.date = DateTime.Now.ToString();
+       //     await Clients.All.SendAsync("globalMessageReceived", message);
+       // }
     }
 }

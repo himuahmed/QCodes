@@ -57,12 +57,16 @@ namespace QCodes.Repository
         //    _dataContext.Persons.Update(person);
         //    return await _dataContext.SaveChangesAsync() > 0 ? true : false;
         //}
+        public async Task<PaginationService<Person>> GetAllBloodDonors(UserParams userParams)
+        {
+            var person = _dataContext.Persons.AsQueryable().OrderByDescending(d=>d.CreatedAt);
 
+            return await PaginationService<Person>.CreateAsync(person, userParams.PageNumber, userParams.PageSize);
+        }
         public async Task<PaginationService<Person>> GetPersonByDistrict(string districtName, UserParams userParams)
         {
             var person = _dataContext.Persons.Where(p => p.District == districtName && p.PublicProfile == true).AsQueryable();
            
-
             return await PaginationService<Person>.CreateAsync(person, userParams.PageNumber, userParams.PageSize);
         }
         public async Task<PaginationService<Person>> GetPersonByDistrictAndBloodGroup(string districtName,string bloodGroup, UserParams userParams)

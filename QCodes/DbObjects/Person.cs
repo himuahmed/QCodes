@@ -28,5 +28,8 @@ namespace QCodes.DbObjects
         public string District { get; set; }
         public string Union { get; set; }
         public DateTime CreatedAt { get; set; }
+
+
+        //public ICollection<BloodRequest> BloodRequests { get; set; }
     }
 }

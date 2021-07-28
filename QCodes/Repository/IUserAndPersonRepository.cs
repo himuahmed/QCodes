@@ -12,7 +12,8 @@ namespace QCodes.Repository
         Task<PersonModel> AddPersonDetails(PersonModel personModel);
         Task<Person> GetPersonByUserId(string userId);
         Task<bool> UpdatePersonDetail(PersonModel personModel);
-       //Task<bool> updateProfilePrivacy(string userId, bool isPublic);
+        //Task<bool> updateProfilePrivacy(string userId, bool isPublic);
+        Task<PaginationService<Person>> GetAllBloodDonors(UserParams userParams);
         Task<PaginationService<Person>> GetPersonByDistrict(string districtName, UserParams userParams);
         Task<PaginationService<Person>> GetPersonByDistrictAndBloodGroup(string districtName, string bloodGroup, UserParams userParams);
         Task<PaginationService<Person>> GetPersonByDivision(string divisionName, UserParams userParams);

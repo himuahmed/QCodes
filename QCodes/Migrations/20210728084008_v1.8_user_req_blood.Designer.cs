@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QCodes.Data;
 
 namespace QCodes.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210728084008_v1.8_user_req_blood")]
+    partial class v18_user_req_blood
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,10 +236,6 @@ namespace QCodes.Migrations
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("userId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId");
@@ -408,11 +406,11 @@ namespace QCodes.Migrations
 
             modelBuilder.Entity("QCodes.DbObjects.BloodRequest", b =>
                 {
-                    b.HasOne("QCodes.DbObjects.Person", "Person")
+                    b.HasOne("QCodes.DbObjects.Person", "person")
                         .WithMany()
                         .HasForeignKey("PersonId");
 
-                    b.Navigation("Person");
+                    b.Navigation("person");
                 });
 
             modelBuilder.Entity("QCodes.DbObjects.QTag", b =>

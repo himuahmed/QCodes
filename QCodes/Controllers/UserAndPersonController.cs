@@ -110,6 +110,27 @@ namespace QCodes.Controllers
             return BadRequest();
         }
 
+        [HttpGet("getAllDonors")]
+        public async Task<IActionResult> GetAllDonors([FromQuery] UserParams userParams)
+        {
+            var personList = await _userAndPersonRepository.GetAllBloodDonors( userParams);
+            foreach (var person in personList)
+            {
+                if (person.ContactNoVisible == false)
+                {
+                    person.ContactNo = "N/A";
+                }
+
+                if (person.EmailVisible == false)
+                {
+                    person.Email = "N/A";
+                }
+            }
+            //if (!person.Any()) return Ok("No resord.");
+
+            return Ok(personList);
+        }
+
 
         [HttpGet("dis/{district}")]
         public async Task<IActionResult> GetPersonByDistrict(string district, [FromQuery] UserParams userParams)

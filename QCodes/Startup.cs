@@ -46,6 +46,8 @@ namespace QCodes
 
             services.AddScoped<IQTagRepository, QTagRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IBloodRequestRepository, BloodRequestRepository>();
             services.AddScoped<IUserAndPersonRepository, UserAndPersonRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
