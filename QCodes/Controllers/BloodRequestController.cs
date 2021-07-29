@@ -34,8 +34,10 @@ namespace QCodes.Controllers
         public async Task<IActionResult> requestBlood(BloodRequestModel bloodRequestModel)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            Person person = await _userAndPersonRepository.GetPersonByUserId(userId);
             bloodRequestModel.createdAt = DateTime.Now;
             bloodRequestModel.userId = userId;
+            bloodRequestModel.PersonId = person.PersonId;
             var mappedObj = _mapper.Map<BloodRequest>(bloodRequestModel);
             var res = await _bloodRequestRepository.RequestBlood(mappedObj);
             if(res != null)

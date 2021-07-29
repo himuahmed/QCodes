@@ -14,5 +14,7 @@ namespace QCodes.Models
         public string BloodGroup { get; set; }
         public string Description { get; set; }
         public DateTime createdAt { get; set; }
+
+        public string PersonId { get; set; }
     }
 }
