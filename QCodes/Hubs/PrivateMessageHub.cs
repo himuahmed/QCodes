@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using QCodes.DbObjects;
 using QCodes.Models;
 using QCodes.Repository;
 
@@ -16,14 +17,15 @@ namespace QCodes.Hubs
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PrivateMessageHub : Hub
     {
-        private readonly IUserAndPersonRepository _userAndPersonRepository;
+
         private readonly IHttpContextAccessor _httpContextAccessor;
         private InMemoryDbForUserInfo _inMemoryDbForUserInfo;
-        public PrivateMessageHub(IUserAndPersonRepository userAndPersonRepository, IHttpContextAccessor httpContextAccessor,InMemoryDbForUserInfo inMemoryDbForUserInfo)
+        private IMessageRepository _messageRepository;
+        public PrivateMessageHub(IHttpContextAccessor httpContextAccessor,InMemoryDbForUserInfo inMemoryDbForUserInfo, IMessageRepository messageRepository)
         {
             _inMemoryDbForUserInfo = inMemoryDbForUserInfo;
-            _userAndPersonRepository = userAndPersonRepository;
             _httpContextAccessor = httpContextAccessor;
+            _messageRepository = messageRepository;
             
         }
 
@@ -75,14 +77,31 @@ namespace QCodes.Hubs
         {
            await  Clients.Client(Context.ConnectionId).SendAsync("getConnectionId", Context.ConnectionId);
         }
-        public Task SendDirectMessage(PrivateMessageModel message)
+        public async Task SendDirectMessage(PrivateMessage message)
         {
             string senderUserId = GetUserId().ToString();
             message.Sender = senderUserId;
+            message.isDelivered = false;
+            message.CreatedAt = DateTime.Now;
             var receiverUserId = message.Receiver;
             var userInfoSender = _inMemoryDbForUserInfo.GetUserInfo(senderUserId);
             var userInfoReciever = _inMemoryDbForUserInfo.GetUserInfo(receiverUserId);
-            return Clients.Client(userInfoReciever.ConnectionId).SendAsync("SendDM", message);
+            if(userInfoReciever != null)
+            {
+                message.isDelivered = true;
+
+                var res = await _messageRepository.SendPrivateMessage(message);
+                if (res != null)
+                {
+                  await Clients.Client(userInfoReciever.ConnectionId).SendAsync("SendDM", message);
+                }
+                
+            }
+            else
+            {
+                await _messageRepository.SendPrivateMessage(message);
+            }
+            
         }
 
     }

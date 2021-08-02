@@ -11,5 +11,6 @@ namespace QCodes.Models
         public string Message { get; set; }
         public string Receiver { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool isDelivered { get; set; }
     }
 }

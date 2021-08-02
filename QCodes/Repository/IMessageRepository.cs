@@ -8,5 +8,7 @@ namespace QCodes.Repository
     {
         Task<GlobalMessage> SendGlobalMessage(GlobalMessage globalMessage);
         Task<PaginationService<GlobalMessage>> GetGlobalMessages(MessageParams messageParams);
+        Task<PrivateMessage> SendPrivateMessage(PrivateMessage privateMessage);
+        Task<PaginationService<PrivateMessage>> GetPrivateMessages(MessageParams messageParams, string userId);
     }
 }

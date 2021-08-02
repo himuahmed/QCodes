@@ -17,6 +17,7 @@ namespace QCodes.Data
         public DbSet<QTag> QTags { get; set; }
         public DbSet<Person> Persons { get; set; }
         public DbSet<GlobalMessage> GlobalMessages { get; set; }
+        public DbSet<PrivateMessage> PrivateMessages { get; set; }
         public DbSet<BloodRequest> BloodRequests { get; set; }
 
 

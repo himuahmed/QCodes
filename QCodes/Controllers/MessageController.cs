@@ -62,6 +62,17 @@ namespace QCodes.Controllers
         }
 
 
+        [Route("GetPrivateMessages")]
+        [HttpGet]
+        public async Task<IActionResult> GetPrivateMessages([FromQuery] MessageParams messageParams)
+        {
+            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value.ToString();
+            var messageList = await _messageRepository.GetPrivateMessages(messageParams, userId);
+            if (messageList.Count != 0) return Ok(messageList);
+            return Ok();
+        }
+
+
 
         //[Route("sendDM")]
         //[HttpPost]

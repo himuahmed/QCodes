@@ -16,6 +16,8 @@ namespace QCodes.Services
             CreateMap<PersonModel, Person>();
             CreateMap<GlobalMessageModel, GlobalMessage>();
             CreateMap<GlobalMessage, GlobalMessageModel>();
+            CreateMap<PrivateMessage, PrivateMessageModel>();
+            CreateMap<PrivateMessageModel, PrivateMessage>();
             CreateMap<BloodRequestModel, BloodRequest>();
             CreateMap<BloodRequest, BloodRequestModel>();
             //CreateMap<PaginationService<Person>, PersonModel>();
