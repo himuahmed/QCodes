@@ -18,6 +18,8 @@ using Microsoft.IdentityModel.Tokens;
 using QCodes.Data;
 using QCodes.Hubs;
 using QCodes.Repository;
+using Microsoft.Extensions.Primitives;
+using Microsoft.AspNetCore.Http;
 
 namespace QCodes
 {
@@ -48,9 +50,12 @@ namespace QCodes
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IBloodRequestRepository, BloodRequestRepository>();
+            services.AddSingleton<InMemoryDbForUserInfo>();
             services.AddScoped<IUserAndPersonRepository, UserAndPersonRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -59,7 +64,27 @@ namespace QCodes
                     ValidateAudience = false
 
                 };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/PrivateMessageHub") || (path.StartsWithSegments("/MessageHub"))  ) )
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+
+
             });
+
+
 
 
             services.Configure<IdentityOptions>(option =>
@@ -96,6 +121,7 @@ namespace QCodes
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<MessageHub>("/MessageHub");
+                endpoints.MapHub<PrivateMessageHub>("/PrivateMessageHub");
             });
         }
     }

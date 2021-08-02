@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using QCodes.DbObjects;
-using QCodes.Models;
+using System.Net;
 
 namespace QCodes.Hubs
 {
-   // [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class MessageHub : Hub
     {
-       //public async Task GlobalChat(GlobalMessageModel message)
-       // {
-       //     message.date = DateTime.Now.ToString();
-       //     await Clients.All.SendAsync("globalMessageReceived", message);
-       // }
+        //public async Task GlobalChat(GlobalMessageModel message)
+        //{
+        //    //string userId = "kjfkjhf";
+        //    message.date = DateTime.Now.ToString();
+        //    //await Clients.All.SendAsync("globalMessageReceived", message);
+        //    await Clients.User(userId).SendAsync("globalMessageReceived", message);
+        //}
     }
 }

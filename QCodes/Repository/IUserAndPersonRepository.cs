@@ -21,5 +21,15 @@ namespace QCodes.Repository
         Task<PaginationService<Person>> GetPersonByUnion(string unionName, UserParams userParams);
         Task<PaginationService<Person>> GetPersonByUnionAndBloodGroup(string unionName, string bloodGroup, UserParams userParams);
         Task<PaginationService<Person>> GetPersonByBloodGroup(string bloodGroup, UserParams userParams);
+
+
+        ///For hub connections .
+        //bool AddUpdate(string UserId, string connectionId);
+        //void Remove(string name);
+        //IEnumerable<HubUserInfo> GetAllUsersExceptThis(string userId);
+        //HubUserInfo GetUserInfo(string userId);
+
+
+
     }
 }

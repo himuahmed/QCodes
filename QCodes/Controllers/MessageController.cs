@@ -22,14 +22,18 @@ namespace QCodes.Controllers
     public class MessageController : ControllerBase
     {
         private readonly IHubContext<MessageHub> _hubContext;
+        private readonly IHubContext<PrivateMessageHub> _privateHMsgubContext;
         private readonly IMapper _mapper;
         private readonly IMessageRepository _messageRepository;
+        private readonly IUserAndPersonRepository _userAndPersonRepository;
 
-        public MessageController(IHubContext<MessageHub> hubContext, IMapper mapper,IMessageRepository messageRepository)
+        public MessageController(IHubContext<MessageHub> hubContext, IHubContext<PrivateMessageHub> privateHMsgubContext, IMapper mapper,IMessageRepository messageRepository, IUserAndPersonRepository userAndPersonRepository)
         {
             _hubContext = hubContext;
             _mapper = mapper;
             _messageRepository = messageRepository;
+            _userAndPersonRepository = userAndPersonRepository;
+            _privateHMsgubContext = privateHMsgubContext;
         }
 
         [Route("send")]                                 
@@ -43,6 +47,7 @@ namespace QCodes.Controllers
             var isMessageSent = await _messageRepository.SendGlobalMessage(messageObj);
             var message = _mapper.Map<GlobalMessageModel>(isMessageSent);
             await _hubContext.Clients.All.SendAsync("globalMessageReceived", message);
+            //await _hubContext.Clients.User("cd3de73c-1a37-4173-a235-d2afc9735262").SendAsync("globalMessageReceived", message);
             return Ok();
         }
 
@@ -55,5 +60,20 @@ namespace QCodes.Controllers
             if (messageList.Count != 0) return Ok(messageList);
             return Ok();
         }
+
+
+
+        //[Route("sendDM")]
+        //[HttpPost]
+        //public async Task<IActionResult> SendDirectMessage([FromBody] string message)
+        //{
+        //    string userId = "cd3de73c-1a37-4173-a235-d2afc9735262";
+        //    var targetUserId = "75c9e2ad-2f5b-433d-b842-d0c787cc06d1";
+        //    //string userId = "himu5";
+        //    var userInfoSender = _userAndPersonRepository.GetUserInfo(userId);
+        //    var userInfoReciever = _userAndPersonRepository.GetUserInfo(targetUserId);
+        //    await _privateHMsgubContext.Clients.Client(userInfoReciever.ConnectionId).SendAsync("SendDM", message, userInfoSender);
+        //    return Ok();
+        //}
     }
 }
