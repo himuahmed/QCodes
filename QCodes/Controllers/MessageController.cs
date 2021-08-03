@@ -26,14 +26,16 @@ namespace QCodes.Controllers
         private readonly IMapper _mapper;
         private readonly IMessageRepository _messageRepository;
         private readonly IUserAndPersonRepository _userAndPersonRepository;
+        //private  PrivateMessageHub _privateMessageHub;
 
-        public MessageController(IHubContext<MessageHub> hubContext, IHubContext<PrivateMessageHub> privateHMsgubContext, IMapper mapper,IMessageRepository messageRepository, IUserAndPersonRepository userAndPersonRepository)
+        public MessageController(IHubContext<MessageHub> hubContext, IHubContext<PrivateMessageHub> privateHMsgubContext,
+        IMapper mapper,IMessageRepository messageRepository, IUserAndPersonRepository userAndPersonRepository/*, PrivateMessageHub privateMessageHub*/)
         {
             _hubContext = hubContext;
             _mapper = mapper;
             _messageRepository = messageRepository;
             _userAndPersonRepository = userAndPersonRepository;
-            _privateHMsgubContext = privateHMsgubContext;
+            //_privateHMsgubContext = privateHMsgubContext;
         }
 
         [Route("send")]                                 
@@ -57,19 +59,66 @@ namespace QCodes.Controllers
         public async Task<IActionResult> GetGlobalMessages([FromQuery] MessageParams messageParams)
         {
             var messageList = await _messageRepository.GetGlobalMessages(messageParams);
+            Response.Headers(messageList.TotalCount, messageList.TotalPage, messageList.CurrentPage, messageList.PageSize);
             if (messageList.Count != 0) return Ok(messageList);
             return Ok();
         }
 
+        //[Route("sendPM")]
+        //[HttpPost]
+        //public async Task<IActionResult> sendPrivateMessage(PrivateMessage priaveMessage)
+        //{
+        //    await _privateMessageHub.SendDirectMessage(priaveMessage);
+        //    return Ok();
+        //}
 
-        [Route("GetPrivateMessages")]
+        [Route("GetPrivateMessages/{receiverId}")]
         [HttpGet]
-        public async Task<IActionResult> GetPrivateMessages([FromQuery] MessageParams messageParams)
+        public async Task<IActionResult> GetPrivateMessages(string receiverId,[FromQuery] MessageParams messageParams)
         {
             string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value.ToString();
-            var messageList = await _messageRepository.GetPrivateMessages(messageParams, userId);
+            var messageList = await _messageRepository.GetPrivateMessages(messageParams, userId,receiverId);
+            Response.Headers(messageList.TotalCount, messageList.TotalPage, messageList.CurrentPage, messageList.PageSize);
             if (messageList.Count != 0) return Ok(messageList);
             return Ok();
+        }
+
+        [Route("GetChatList")]
+        [HttpGet]
+        public async Task<IActionResult> GetChatList()
+        {
+            List<ChatPersonList> chatList = new List<ChatPersonList>();
+            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value.ToString();
+
+            var chats = await _messageRepository.GetChatList(userId);
+            foreach(var msg in chats)
+            {
+                if(msg.Sender != userId)
+                {
+                    var personAssociated = await _userAndPersonRepository.GetPersonByUserId(msg.Sender);
+                    personAssociated = _userAndPersonRepository.FilterPersonData(personAssociated);
+                    ChatPersonList chatPerson = new ChatPersonList();
+
+
+                    chatPerson.PersonImChattingWith = personAssociated;
+                    chatPerson.LastMessage = msg;
+                    
+                    chatList.Add(chatPerson);
+                }
+                else if(msg.Sender == userId)
+                {
+                    var personAssociated = await _userAndPersonRepository.GetPersonByUserId(msg.Receiver);
+                    personAssociated = _userAndPersonRepository.FilterPersonData(personAssociated);
+                    ChatPersonList chatPerson = new ChatPersonList();
+
+                    chatPerson.PersonImChattingWith = personAssociated;
+                    chatPerson.LastMessage = msg;
+                    
+                    chatList.Add(chatPerson);
+                }
+            }
+            return Ok(chatList);
+
         }
 
 

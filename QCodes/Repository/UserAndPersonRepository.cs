@@ -29,6 +29,13 @@ namespace QCodes.Repository
             return returnedPerson;
         }
 
+        public Person FilterPersonData(Person person)
+        {
+            person.Email = (person.EmailVisible == true) ? person.Email : null; 
+            person.ContactNo = (person.ContactNoVisible == true) ? person.ContactNo : null;
+            return person;
+        }
+
         public async Task<PersonModel> AddPersonDetails(PersonModel personModel)
         {
              var personToBeInserted = _mapper.Map<Person>(personModel);

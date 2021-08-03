@@ -110,6 +110,7 @@ namespace QCodes.Controllers
             return BadRequest();
         }
 
+        [AllowAnonymous]
         [HttpGet("getAllDonors")]
         public async Task<IActionResult> GetAllDonors([FromQuery] UserParams userParams)
         {
@@ -127,7 +128,7 @@ namespace QCodes.Controllers
                 }
             }
             //if (!person.Any()) return Ok("No resord.");
-
+            Response.Headers(personList.TotalCount, personList.TotalPage, personList.CurrentPage, personList.PageSize);
             return Ok(personList);
         }
 
@@ -151,7 +152,7 @@ namespace QCodes.Controllers
                 }
             }
             //if (!person.Any()) return Ok("No resord.");
-
+            Response.Headers(personList.TotalCount, personList.TotalPage, personList.CurrentPage, personList.PageSize);
             return Ok(personList);
         }
 
@@ -179,7 +180,7 @@ namespace QCodes.Controllers
                 }
             }
             //if (!person.Any()) return Ok("No resord.");
-
+            Response.Headers(personList.TotalCount, personList.TotalPage, personList.CurrentPage, personList.PageSize);
             return Ok(personList);
         }
 
@@ -202,7 +203,7 @@ namespace QCodes.Controllers
                 }
             }
             //if (!person.Any()) return Ok("No resord.");
-
+            Response.Headers(personList.TotalCount, personList.TotalPage, personList.CurrentPage, personList.PageSize);
             return Ok(personList);
         }
 
@@ -230,7 +231,7 @@ namespace QCodes.Controllers
                 }
             }
             //if (!person.Any()) return Ok("No resord.");
-
+            Response.Headers(personList.TotalCount, personList.TotalPage, personList.CurrentPage, personList.PageSize);
             return Ok(personList);
         }
 
@@ -253,7 +254,7 @@ namespace QCodes.Controllers
                 }
             }
             //if (!person.Any()) return Ok("No resord.");
-
+            Response.Headers(personList.TotalCount, personList.TotalPage, personList.CurrentPage, personList.PageSize);
             return Ok(personList);
         }
 
@@ -281,7 +282,7 @@ namespace QCodes.Controllers
                 }
             }
             //if (!person.Any()) return Ok("No resord.");
-
+            Response.Headers(personList.TotalCount, personList.TotalPage, personList.CurrentPage, personList.PageSize);
             return Ok(personList);
         }
 
@@ -296,7 +297,7 @@ namespace QCodes.Controllers
 
             var person = await _userAndPersonRepository.GetPersonByBloodGroup(group, userParams);
 
-            Response.Headers(person.CurrentPage, person.PageSize, person.TotalCount, person.TotalPage);
+            
             foreach (var per in person)
             {
                 if (per.ContactNoVisible == false)
@@ -310,7 +311,7 @@ namespace QCodes.Controllers
                 }
             }
             //if (!person.Any()) return Ok("No resord.");
-
+            Response.Headers(person.TotalCount, person.TotalPage, person.CurrentPage, person.PageSize);
             return Ok(person);
         }
 

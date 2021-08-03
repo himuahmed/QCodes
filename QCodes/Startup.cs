@@ -51,6 +51,7 @@ namespace QCodes
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IBloodRequestRepository, BloodRequestRepository>();
             services.AddSingleton<InMemoryDbForUserInfo>();
+            //services.AddScoped<PrivateMessageHub>();
             services.AddScoped<IUserAndPersonRepository, UserAndPersonRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {

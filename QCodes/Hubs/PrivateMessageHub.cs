@@ -94,6 +94,7 @@ namespace QCodes.Hubs
                 if (res != null)
                 {
                   await Clients.Client(userInfoReciever.ConnectionId).SendAsync("SendDM", message);
+                  await Clients.Client(userInfoSender.ConnectionId).SendAsync("SendDM", message);
                 }
                 
             }

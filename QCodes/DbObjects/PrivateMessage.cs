@@ -22,5 +22,7 @@ namespace QCodes.DbObjects
         public DateTime CreatedAt { get; set; }
         [Required]
         public bool isDelivered { get; set; }
+        [Required]
+        public string signature { get; set; }
     }
 }

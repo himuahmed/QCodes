@@ -54,6 +54,7 @@ namespace QCodes.Controllers
         public async Task<IActionResult> blodReqList([FromQuery] BloodRequestsParams bloodRequestsParams)
         {
             var res =  await _bloodRequestRepository.GetAllBloodRequests(bloodRequestsParams);
+            Response.Headers(res.TotalCount, res.TotalPage, res.CurrentPage, res.PageSize);
             return Ok(res);
         }
 
