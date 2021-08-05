@@ -4,7 +4,7 @@ using System.Net;
 
 namespace QCodes.Hubs
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     public class MessageHub : Hub
     {
         //public async Task GlobalChat(GlobalMessageModel message)

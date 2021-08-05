@@ -12,5 +12,6 @@ namespace QCodes.Repository
         Task<PrivateMessage> SendPrivateMessage(PrivateMessage privateMessage);
         Task<PaginationService<PrivateMessage>> GetPrivateMessages(MessageParams messageParams, string userId,string receiverId);
         Task<List<PrivateMessage>> GetChatList(string userId);
+        Task<bool> UpdateMessageStatus(string userId, string receiverId);
     }
 }

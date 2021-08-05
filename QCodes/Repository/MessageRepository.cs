@@ -1,4 +1,5 @@
-﻿using QCodes.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using QCodes.Data;
 using QCodes.DbObjects;
 using QCodes.Services;
 using System;
@@ -51,7 +52,7 @@ namespace QCodes.Repository
         {
             List<string> uniqueChatList = new List<string>();
 
-            var allChats = _dataContext.PrivateMessages.Where(m => m.Sender == userId || m.Receiver == userId).OrderByDescending(m=>m.CreatedAt).ToList();
+            var allChats = await _dataContext.PrivateMessages.Where(m => m.Sender == userId || m.Receiver == userId).OrderByDescending(m=>m.CreatedAt).ToListAsync();
 
             foreach(var msg in allChats)
             {
@@ -73,6 +74,16 @@ namespace QCodes.Repository
             }
             return latestMsgList;
         }
+
+        public async Task<bool> UpdateMessageStatus(string userId,string receiverId)
+        {
+            string signatureReverse = receiverId + "-" + userId;
+            var messageList = await _dataContext.PrivateMessages.Where(m => m.signature == signatureReverse && m.isDelivered == false).ToListAsync();
+            messageList.ForEach(m => m.isDelivered = true);
+            var res = await _dataContext.SaveChangesAsync();
+            return (res > 0) ? true : false;
+        }
+
 
     }
 }

@@ -48,7 +48,7 @@ namespace QCodes.Controllers
             
         }
 
-
+        [AllowAnonymous]
         [Route("getbloodRequestList")]
         [HttpGet]
         public async Task<IActionResult> blodReqList([FromQuery] BloodRequestsParams bloodRequestsParams)

@@ -88,7 +88,7 @@ namespace QCodes.Hubs
             var userInfoReciever = _inMemoryDbForUserInfo.GetUserInfo(receiverUserId);
             if(userInfoReciever != null)
             {
-                message.isDelivered = true;
+                //message.isDelivered = true;
 
                 var res = await _messageRepository.SendPrivateMessage(message);
                 if (res != null)
@@ -101,9 +101,20 @@ namespace QCodes.Hubs
             else
             {
                 await _messageRepository.SendPrivateMessage(message);
+                await Clients.Client(userInfoSender.ConnectionId).SendAsync("SendDM", message);
             }
             
         }
+
+        public async Task UpdateMessageStatus(string receiverId)
+        {
+            string userId = GetUserId().ToString();
+            var res = await _messageRepository.UpdateMessageStatus(userId, receiverId);
+            var userInfoSender = _inMemoryDbForUserInfo.GetUserInfo(userId);
+            await Clients.Client(userInfoSender.ConnectionId).SendAsync("updateMessageStatus", res);
+        }
+
+
 
     }
 }
