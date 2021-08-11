@@ -41,7 +41,8 @@ namespace QCodes
             services.AddCors(o => o.AddPolicy("CorsPolicy",
                 builder =>
                 {
-                    builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:4200").AllowCredentials();
+                   builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:4200").AllowCredentials();
+                   // builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("https://blood-donors-community-152de.web.app").AllowCredentials();
                 }));
             services.AddSignalR();
             services.AddAutoMapper(typeof(UserAndPersonRepository).Assembly);

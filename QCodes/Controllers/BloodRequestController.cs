@@ -33,6 +33,10 @@ namespace QCodes.Controllers
         [HttpPost]
         public async Task<IActionResult> requestBlood(BloodRequestModel bloodRequestModel)
         {
+            //if (bloodRequestModel.BloodGroup.Length > 8)
+            //{
+            //    bloodRequestModel.BloodGroup = bloodRequestModel.BloodGroup.Substring(0, bloodRequestModel.BloodGroup.Length - 8) + "+";
+            //}
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             Person person = await _userAndPersonRepository.GetPersonByUserId(userId);
             bloodRequestModel.createdAt = DateTime.Now;
